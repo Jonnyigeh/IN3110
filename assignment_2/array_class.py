@@ -3,7 +3,6 @@ Array class for assignment 2
 """
 
 class Array:
-
     def __init__(self, shape, *values):
         """Initialize an array of 1-dimensionality. Elements can only be of type:
 
@@ -27,11 +26,52 @@ class Array:
 
         # Check if the values are of valid types
 
+        if type(values[0]) == int:
+            if all(isinstance(n, int) for n in values):
+                pass
+            else:
+                raise ValueError(
+                "Input elements must all be of the same datatype (int, float or bool)"
+                )
+        elif type(values[0]) == bool:
+            if all(isinstance(n, bool) for n in values):
+                pass
+            else:
+                raise ValueError(
+                "Input elements must all be of the same datatype (int, float or bool)"
+                )
+        elif type(values[0]) == float:
+            if all(isinstance(n, float) for n in values):
+                pass
+            else:
+                raise ValueError(
+                "Input elements must all be of the same datatype (int, float or bool)"
+                )
+        else:
+            raise TypeError(
+            "Input elements must be of type: int, float or boolean"
+            )
+
         # Check that the amount of values corresponds to the shape
-
+        if len(val) != shape[0]:
+            raise ValueError(
+            "Input array must be of same length as input shape"
+            )
         # Set class-variables
+        self.shape = shape
+        self.values = []
+        for i in values:
+            self.values.append(values[i])
 
-        pass
+    def __getitem__(self, index):
+        """
+        Extracts single element from self.values
+
+        Returns:
+            Int/Float/Bool: Element with index [index] in self.values
+
+        """
+        print(self.values[index])
 
     def __str__(self):
         """Returns a nicely printable string representation of the array.
@@ -195,3 +235,6 @@ class Array:
         """
 
         pass
+
+if __name__ == "__main__":
+    inst = Array()
