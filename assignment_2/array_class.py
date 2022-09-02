@@ -1,6 +1,7 @@
 """
 Array class for assignment 2
 """
+import inspect
 
 class Array:
     def __init__(self, shape, *values):
@@ -53,15 +54,15 @@ class Array:
             )
 
         # Check that the amount of values corresponds to the shape
-        if len(val) != shape[0]:
+        if len(values) != shape[0]:
             raise ValueError(
             "Input array must be of same length as input shape"
             )
         # Set class-variables
-        self.shape = shape
+        self.shape = shape[0]
         self.values = []
         for i in values:
-            self.values.append(values[i])
+            self.values.append(i)
 
     def __getitem__(self, index):
         """
@@ -80,7 +81,7 @@ class Array:
             str: A string representation of the array.
 
         """
-        pass
+        return f"The Array has shape (1,{self.shape}) and elements {self.values}"
 
     def __add__(self, other):
         """Element-wise adds Array with another Array or number.
@@ -95,11 +96,26 @@ class Array:
             Array: the sum as a new array.
 
         """
-
-        # check that the method supports the given arguments (check for data type and shape of array)
         # if the array is a boolean you should return NotImplemented
+        # check that the method supports the given arguments (check for data type and shape of array)
 
-        pass
+        if isinstance(other, Array):
+            if self.values[0] == bool or other.values == bool:
+                return NotImplemented
+
+            elif len(self.values) != len(other.values):
+                return NotImplemented
+            else:
+                for i in range(len(self.values)):
+                    self.values[i] += other.values[i]
+                return self.values
+
+        elif type(other) == int or type(other) == float:
+            for i in range(len(self.values)):
+                    self.values[i] += other
+            return self.values
+        else:
+            return NotImplemented
 
     def __radd__(self, other):
         """Element-wise adds Array with another Array or number.
@@ -114,7 +130,7 @@ class Array:
             Array: the sum as a new array.
 
         """
-        pass
+        return self.__add__(other)
 
     def __sub__(self, other):
         """Element-wise subtracts an Array or number from this Array.
@@ -129,7 +145,23 @@ class Array:
             Array: the difference as a new array.
 
         """
-        pass
+        if isinstance(other, Array):
+            if self.values[0] == bool or other.values == bool:
+                return NotImplemented
+
+            elif len(self.values) != len(other.values):
+                return NotImplemented
+            else:
+                for i in range(len(self.values)):
+                    self.values[i] -= other.values[i]
+                return self.values
+
+        elif type(other) == int or type(other) == float:
+            for i in range(len(self.values)):
+                    self.values[i] -= other
+            return self.values
+        else:
+            return NotImplemented
 
     def __rsub__(self, other):
         """Element-wise subtracts this Array from a number or Array.
@@ -144,7 +176,7 @@ class Array:
             Array: the difference as a new array.
 
         """
-        pass
+        return self.__sub__(other)
 
     def __mul__(self, other):
         """Element-wise multiplies this Array with a number or array.
@@ -159,7 +191,23 @@ class Array:
             Array: a new array with every element multiplied with `other`.
 
         """
-        pass
+        if isinstance(other, Array):
+            if self.values[0] == bool or other.values == bool:
+                return NotImplemented
+
+            elif len(self.values) != len(other.values):
+                return NotImplemented
+            else:
+                for i in range(len(self.values)):
+                    self.values[i] *= other.values[i]
+                return self.values
+
+        elif type(other) == int or type(other) == float:
+            for i in range(len(self.values)):
+                    self.values[i] *= other
+            return self.values
+        else:
+            return NotImplemented
 
     def __rmul__(self, other):
         """Element-wise multiplies this Array with a number or array.
@@ -190,7 +238,13 @@ class Array:
             bool: True if the two arrays are equal (identical). False otherwise.
 
         """
-        pass
+        if isinstance(other, Array):
+            if len(self.values) == len(other.values):
+                return True
+            else:
+                return False
+        else:
+            return False
 
     def is_equal(self, other):
         """Compares an Array element-wise with another Array or number.
@@ -210,8 +264,26 @@ class Array:
             ValueError: if the shape of self and other are not equal.
 
         """
+        new_list = []
+        if isinstance(other, Array):
+            if len(self.values) != len(other.values):
+                raise ValueError(
+                "The length of the two arrays do not match!"
+                )
+            else:
+                for i in range(len(self.values)):
+                    new_list.append(self.values[i] == other.values[i])
+                return new_list
 
-        pass
+        elif type(other) == int or type(other) == float or type(other) == bool:
+            for i in range(len(self.values)):
+                self.values[i] += other
+            return new_list
+
+        else:
+            raise TypeError(
+            "The second argument is not a valid quantity!"
+            )
 
     def min_element(self):
         """Returns the smallest value of the array.
@@ -222,8 +294,17 @@ class Array:
             float: The value of the smallest element in the array.
 
         """
+        if self.values[0] == bool:
+            return NotImplemented
+        else:
+            min_element = self.values[0]
+            for element in self.values:
+                if min_element > element:
+                    min_element = element
+                else:
+                    pass
 
-        pass
+            return float(min_element)
 
     def mean_element(self):
         """Returns the mean value of an array
@@ -233,8 +314,17 @@ class Array:
         Returns:
             float: the mean value
         """
+        if self.values[0] == bool:
+            return NotImplemented
 
-        pass
+        mean = sum(element for element in self.values) / self.shape
+        return mean
+
+
 
 if __name__ == "__main__":
-    inst = Array()
+    inst = Array((3,),1,1,1)
+    inst2 = Array((3,), 2,2,2)
+    inst3 = Array((3,), 1,2,3)
+    inst4 = Array((3,), True, False, False)
+    i = 10
