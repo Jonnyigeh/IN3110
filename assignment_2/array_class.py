@@ -1,9 +1,13 @@
 """
 Array class for assignment 2
 """
-import inspect
 
 class Array:
+    """Generates an array with similar functionality as numpy or python arrays.
+
+    Has functionality of element-wise adding, subtracting, multiplying etc.
+
+    """
     def __init__(self, shape, *values):
         """Initialize an array of 1-dimensionality. Elements can only be of type:
 
@@ -65,8 +69,7 @@ class Array:
             self.values.append(i)
 
     def __getitem__(self, index):
-        """
-        Extracts single element from self.values
+        """Extracts single element from self.values
 
         Returns:
             Int/Float/Bool: Element with index [index] in self.values
@@ -98,11 +101,12 @@ class Array:
         """
         # if the array is a boolean you should return NotImplemented
         # check that the method supports the given arguments (check for data type and shape of array)
+        if isinstance(self.values[0],bool):
+            return NotImplemented
 
-        if isinstance(other, Array):
-            if self.values[0] == bool or other.values == bool:
+        elif isinstance(other, Array):
+            if isinstance(self.values[0],bool) or isinstance(other.values,bool):
                 return NotImplemented
-
             elif len(self.values) != len(other.values):
                 return NotImplemented
             else:
@@ -110,7 +114,7 @@ class Array:
                     self.values[i] += other.values[i]
                 return self.values
 
-        elif type(other) == int or type(other) == float:
+        elif isinstance(other,int) or isinstance(other,float):
             for i in range(len(self.values)):
                     self.values[i] += other
             return self.values

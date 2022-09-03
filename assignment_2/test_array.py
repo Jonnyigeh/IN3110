@@ -8,35 +8,94 @@ from array_class import Array
 
 
 def test_str_1d():
-    pass
+    """
+    Checking that our Array class returns a string.
 
+    """
+    inst = Array((1,), 1)
+    expected = "The Array has shape (1,1) and elements [1]"
+
+    assert (inst.__str__() == expected)
 
 def test_add_1d():
-    pass
+    """
+    Checking that our Arrayclass __add__ method is implemented properly.
+    """
+    inst = Array((3,), 1,1,1)
+    i = 10
+    expected = [11,11,11]
+    computed = inst + i
 
+    assert (expected == computed)
 
 def test_sub_1d():
-    pass
+    """
+    Checking that our Arrayclass __sub__ method is implemented properly.
+    """
+    inst = Array((3,), 10,10,10)
+    inst2 = Array((3,), 5,5,5)
+    expected = [5,5,5]
+    computed = inst - inst2
+
+    assert (expected == computed)
 
 
 def test_mul_1d():
-    pass
+    """
+    Checking that our Arrayclass __mul__ method is implemented properly.
+    """
+    inst = Array((3,), 1,2,3)
+    i = 10
+    expected = [10, 20, 30]
+    computed = inst * i
+
+    assert (expected == computed)
 
 
 def test_eq_1d():
-    pass
+    """
+    Checking that our Arrayclass __eq__ method is implemented properly.
+    """
+    inst = Array((3,), 1, 2, 3)
+    inst2 = Array((3,), 2,2,2)
+    i = [1,2,3]
+    expected = [2, 4, 5]
+    computed = inst * inst
+
+    assert (inst == i)
+    assert (expected == computed)
 
 
 def test_same_1d():
-    pass
+    """
+    Checking that our Arrayclass is_equal method is implemented properly.
+    """
+    inst = Array((3,), 1,1,1)
+    inst2 = Array((3,), 1,1,1)
+
+    assert all(inst.is_equal(inst2))
+
 
 
 def test_smallest_1d():
-    pass
+    """
+    Checking that our Arrayclass min_element method is implemented properly.
+    """
+    inst = Array((3,), 1, 10, 23)
+    expected = 1
+    computed = inst.min_element()
 
+    assert (computed == expected)
 
 def test_mean_1d():
-    pass
+    """
+    Checking that our Arrayclass mean_element method is implemented properly.
+    """
+    inst = Array((3,), 0, 5, 10)
+    expected = 5
+    computed = inst.mean_element()
+
+    assert (expected == computed)
 
 
 # 2D tests (Task 6)
