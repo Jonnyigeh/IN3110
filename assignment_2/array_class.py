@@ -333,6 +333,8 @@ class Array:
 if __name__ == "__main__":
     inst = Array((3,),1,1,1)
     inst2 = Array((3,), 2,2,2)
-    inst3 = Array((3,), 1,2,3)
     inst4 = Array((3,), True, False, False)
     i = 10
+    a = inst + i
+    b = inst + inst2
+    
