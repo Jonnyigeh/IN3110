@@ -1,0 +1,7 @@
+# Ignore ALL .log files
+*.log
+# Ignore __pycache__
+*__pycache__
+# Ignore local file lok.py
+lok.py
+
