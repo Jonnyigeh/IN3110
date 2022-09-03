@@ -1,7 +1,7 @@
 """
 Array class for assignment 2
 """
-
+import numpy as np
 class Array:
     """Generates an array with similar functionality as numpy or python arrays.
 
@@ -101,6 +101,7 @@ class Array:
         """
         # if the array is a boolean you should return NotImplemented
         # check that the method supports the given arguments (check for data type and shape of array)
+        new_array = [i for i in self.values]
         if isinstance(self.values[0],bool):
             return NotImplemented
 
@@ -111,13 +112,13 @@ class Array:
                 return NotImplemented
             else:
                 for i in range(len(self.values)):
-                    self.values[i] += other.values[i]
-                return self.values
+                    new_array[i] += other.values[i]
+                return new_array
 
         elif isinstance(other,int) or isinstance(other,float):
             for i in range(len(self.values)):
-                    self.values[i] += other
-            return self.values
+                    new_array[i] += other
+            return new_array
         else:
             return NotImplemented
 
@@ -149,21 +150,22 @@ class Array:
             Array: the difference as a new array.
 
         """
+        new_array = [i for i in self.values]
         if isinstance(other, Array):
-            if self.values[0] == bool or other.values == bool:
+            if self.values[0] == bool or other.values[0] == bool:
                 return NotImplemented
 
             elif len(self.values) != len(other.values):
                 return NotImplemented
             else:
                 for i in range(len(self.values)):
-                    self.values[i] -= other.values[i]
-                return self.values
+                    new_array[i] -= other.values[i]
+                return new_array
 
         elif type(other) == int or type(other) == float:
             for i in range(len(self.values)):
-                    self.values[i] -= other
-            return self.values
+                    new_array[i] -= other
+            return new_array
         else:
             return NotImplemented
 
@@ -195,6 +197,7 @@ class Array:
             Array: a new array with every element multiplied with `other`.
 
         """
+        new_array = [i for i in self.values]
         if isinstance(other, Array):
             if self.values[0] == bool or other.values == bool:
                 return NotImplemented
@@ -203,13 +206,14 @@ class Array:
                 return NotImplemented
             else:
                 for i in range(len(self.values)):
-                    self.values[i] *= other.values[i]
-                return self.values
+                    new_array[i] *= other.values[i]
+                return new_array
 
         elif type(other) == int or type(other) == float:
             for i in range(len(self.values)):
-                    self.values[i] *= other
-            return self.values
+                    new_array[i] *= other
+            return new_array
+
         else:
             return NotImplemented
 
@@ -266,9 +270,9 @@ class Array:
 
         Raises:
             ValueError: if the shape of self and other are not equal.
-
+            TypeError: if other is not an array or a number.
         """
-        new_list = []
+        new_array = [i for i in self.values]
         if isinstance(other, Array):
             if len(self.values) != len(other.values):
                 raise ValueError(
@@ -276,13 +280,13 @@ class Array:
                 )
             else:
                 for i in range(len(self.values)):
-                    new_list.append(self.values[i] == other.values[i])
-                return new_list
+                    new_array[i] = self.values[i] == other.values[i]
+                return new_array
 
-        elif type(other) == int or type(other) == float or type(other) == bool:
+        elif type(other) == int or type(other) == float:
             for i in range(len(self.values)):
-                self.values[i] += other
-            return new_list
+                new_array[i] = self.values[i] == other
+            return new_array
 
         else:
             raise TypeError(

@@ -57,12 +57,12 @@ def test_eq_1d():
     Checking that our Arrayclass __eq__ method is implemented properly.
     """
     inst = Array((3,), 1, 2, 3)
-    inst2 = Array((3,), 2,2,2)
-    i = [1,2,3]
-    expected = [2, 4, 5]
-    computed = inst * inst
+    inst2 = Array((3,), 2, 2, 2)
+    i = [1, 2, 3]
+    expected = [2, 4, 6]
+    computed = inst * inst2
 
-    assert (inst == i)
+    assert (inst.values == i)
     assert (expected == computed)
 
 
