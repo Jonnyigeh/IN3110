@@ -1,7 +1,7 @@
 """
 Array class for assignment 2
 """
-import numpy as np
+
 class Array:
     """Generates an array with similar functionality as numpy or python arrays.
 
@@ -337,4 +337,3 @@ if __name__ == "__main__":
     i = 10
     a = inst + i
     b = inst + inst2
-    
