@@ -1,5 +1,13 @@
 from setuptools import setup
 
+setup(name = "instapy",
+        version = "0.1",
+        description = "Package for assignment 3",
+        author = "Jonny Aarstad Igeh",
+        author_email = "jonnyai@uio.no",
+        packages = ["instapy"]
+        )
+
 # IN4110: set to True when you are ready for the Cython implementation in Task 5
 use_cython = False
 

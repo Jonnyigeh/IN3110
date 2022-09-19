@@ -11,11 +11,12 @@ build-backend = "setuptools.build_meta"
 version = "0.1.0"
 requires-python = ">=3.7"
 license = {text = "MIT License"}
-# name = "..."
-# description = "..."
-# readme = "..."
-# dependencies = [
-# ]
+name = "instapy"
+description = "A package for assignment 3"
+readme = "./README.md"
+dependencies = ["numpy",
+"pillow", "numba"
+]
 
 
 [project.scripts]

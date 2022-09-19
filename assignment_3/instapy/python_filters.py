@@ -14,6 +14,7 @@ def python_color2gray(image: np.array) -> np.array:
     gray_image = np.empty_like(image)
     # iterate through the pixels, and apply the grayscale transform
 
+
     ...
     return gray_image
 
