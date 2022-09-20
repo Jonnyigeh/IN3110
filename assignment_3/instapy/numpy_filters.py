@@ -1,7 +1,9 @@
 """numpy implementation of image filters"""
 
-from typing import Optional
 import numpy as np
+import time
+from PIL import Image
+from typing import Optional
 
 
 def numpy_color2gray(image: np.array) -> np.array:
@@ -14,10 +16,10 @@ def numpy_color2gray(image: np.array) -> np.array:
     """
 
     gray_image = np.empty_like(image)
-
     # Hint: use numpy slicing in order to have fast vectorized code
-    ...
     # Return image (make sure it's the right type!)
+    f = lambda x: ( x[0] * 0.21 + x[1] * 0.72 + x[2] * 0.07 ) * np.array([1,1,1]) #/ 3
+    gray_image = np.asarray(np.apply_along_axis(f, 2, image), dtype="uint8")
     return gray_image
 
 
@@ -57,3 +59,11 @@ def numpy_color2sepia(image: np.array, k: Optional[float] = 1) -> np.array:
 
     # Return image (make sure it's the right type!)
     return sepia_image
+
+if __name__=="__main__":
+    t1 = time.time()
+    im = Image.open(".././rain.jpg")
+    pixel = np.asarray(im)
+    gray_im = numpy_color2gray(pixel)
+    t2 = time.time()
+    breakpoint()

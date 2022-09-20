@@ -1,7 +1,8 @@
 """pure Python implementation of image filters"""
 
 import numpy as np
-
+import time
+from PIL import Image
 
 def python_color2gray(image: np.array) -> np.array:
     """Convert rgb pixel array to grayscale
@@ -11,11 +12,17 @@ def python_color2gray(image: np.array) -> np.array:
     Returns:
         np.array: gray_image
     """
+
     gray_image = np.empty_like(image)
     # iterate through the pixels, and apply the grayscale transform
+    for i in range(np.shape(image)[0]):
+        for j in range(np.shape(image)[1]):
+            weighted_avg = (image[i][j][0] * 0.21 + image[i][j][1] * 0.72
+                            + image[i][j][2] * 0.07) #/ 3
+            gray_image[i][j][0] = weighted_avg
+            gray_image[i][j][1] = weighted_avg
+            gray_image[i][j][2] = weighted_avg
 
-
-    ...
     return gray_image
 
 
@@ -36,3 +43,12 @@ def python_color2sepia(image: np.array) -> np.array:
     # Return image
     # don't forget to make sure it's the right type!
     return sepia_image
+
+if __name__=="__main__":
+    t1 = time.time()
+    im = Image.open(".././rain.jpg")
+    pixel = np.asarray(im)
+    gray_im = python_color2gray(pixel)
+    t2 = time.time()
+    breakpoint()
+    
