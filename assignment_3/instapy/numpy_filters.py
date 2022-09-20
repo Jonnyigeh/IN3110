@@ -43,27 +43,43 @@ def numpy_color2sepia(image: np.array, k: Optional[float] = 1) -> np.array:
     if not 0 <= k <= 1:
         # validate k (optional)
         raise ValueError(f"k must be between [0-1], got {k=}")
+    def f(x):
+        R = x[0]
+        G = x[1]
+        B = x[2]
+        newR = int( R * 0.393 + G * 0.769 + B * 0.189 )
+        newG = int( R * 0.349 + G * 0.686 + B * 0.168 )
+        newB = int( R * 0.272 + G * 0.534 + B * 0.131 )
+        if newR > 255:
+            newR = 255
 
-    sepia_image = ...
+        if newG > 255:
+            newG = 255
+
+        if newB > 255:
+            newB = 255
+        return np.array([newR,newG,newB])
+
+    sepia_image = np.empty_like(image)
+    sepia_image = np.asarray(np.apply_along_axis(f, 2, image), dtype="uint8")
 
     # define sepia matrix (optional: with `k` tuning parameter for bonus task 13)
-    sepia_matrix = ...
+    # sepia_matrix = ...
 
     # HINT: For version without adaptive sepia filter, use the same matrix as in the pure python implementation
     # use Einstein sum to apply pixel transform matrix
     # Apply the matrix filter
-    sepia_image = ...
+
 
     # Check which entries have a value greater than 255 and set it to 255 since we can not display values bigger than 255
-    ...
-
     # Return image (make sure it's the right type!)
+    breakpoint()
     return sepia_image
 
 if __name__=="__main__":
     t1 = time.time()
     im = Image.open(".././rain.jpg")
     pixel = np.asarray(im)
-    gray_im = numpy_color2gray(pixel)
+    sepia_im = numpy_color2sepia(pixel)
     t2 = time.time()
     breakpoint()
