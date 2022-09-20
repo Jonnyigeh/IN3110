@@ -1,7 +1,7 @@
 """instapy: image filters in Python"""
 
 import importlib
-
+from . import numba_filters, numpy_filters, profiling, python_filters, io
 
 def get_filter(filter: str = "color2gray", implementation: str = "python"):
     """Return the filter function by name

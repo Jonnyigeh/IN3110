@@ -7,9 +7,11 @@ For Task 6.
 """
 import time
 import instapy
-from . import io
-from typing import Callable
+import io
 import numpy as np
+from typing import Callable
+from PIL import Image
+
 
 
 def time_one(filter_function: Callable, *arguments, calls: int = 3) -> float:
@@ -52,7 +54,7 @@ def make_reports(filename: str = "test/rain.jpg", calls: int = 3):
     filter_names = ["color2gray"] #, "color2sepia"]
     for filter_name in filter_names:
         # get the reference filter function
-        reference_filter = "".join(("instapy.python_filters.python_", f"{filter_name}"))
+        reference_filter = eval("".join(("instapy.python_filters.python_", f"{filter_name}")))
         # time the reference implementation
         t1 = time.time()
         gray_im = reference_filter(np.asarray(image))
@@ -64,7 +66,7 @@ def make_reports(filename: str = "test/rain.jpg", calls: int = 3):
         # iterate through the implementations
         implementations = ["numpy", "numba"]
         for implementation in implementations:
-            filter = "".join("instapy.", f"{implementation}", "_filters.", f"{implementation}_", f"{filtername}")
+            filter = eval("".join(("instapy.", f"{implementation}", "_filters.", f"{implementation}_", f"{filter_name}")))
             # time the filter
             t1 = time.time()
             gray_im = filter(np.asarray(image))
