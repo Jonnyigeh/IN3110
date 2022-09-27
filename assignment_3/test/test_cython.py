@@ -1,4 +1,4 @@
-from instapy.cython_filters import cython_color2gray, cython_color2sepia
+#from instapy.cython_filters import cython_color2gray, cython_color2sepia
 
 import numpy.testing as nt
 

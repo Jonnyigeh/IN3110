@@ -73,7 +73,6 @@ def numpy_color2sepia(image: np.array, k: Optional[float] = 1) -> np.array:
 
     # Check which entries have a value greater than 255 and set it to 255 since we can not display values bigger than 255
     # Return image (make sure it's the right type!)
-    breakpoint()
     return sepia_image
 
 if __name__=="__main__":
