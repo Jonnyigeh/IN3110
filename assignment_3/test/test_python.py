@@ -3,7 +3,7 @@ from PIL import Image
 import numpy as np
 import random as rn
 
-def test_color2gray():
+def test_color2gray(image):
     # run color2gray
     im = Image.open(".././rain.jpg")
     pixel = np.asarray(im)
@@ -23,7 +23,7 @@ def test_color2gray():
     assert (all(test_array))
 
 
-def test_color2sepia():
+def test_color2sepia(image):
     # run color2sepia
     im = Image.open(".././rain.jpg")
     pixel = np.asarray(im)

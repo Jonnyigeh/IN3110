@@ -1,4 +1,5 @@
 from instapy.numpy_filters import numpy_color2gray, numpy_color2sepia
+from instapy.python_filters import python_color2gray, python_color2sepia
 from PIL import Image
 import numpy.testing as nt
 import numpy as np
@@ -7,7 +8,9 @@ import random as rn
 def test_color2gray(image, reference_gray):
     # run color2gray
     im = Image.open(".././rain.jpg")
+    ref_im = Image.open(".././python_gray_ref.jpg")
     pixel = np.asarray(im)
+    ref_pixel = np.asarray(ref_im)
     gray_im = numpy_color2gray(pixel)
     # check that the result has the right shape, type
     # assert uniform r,g,b values
@@ -19,13 +22,16 @@ def test_color2gray(image, reference_gray):
         j = rn.randint(0, height-1)
         test_array[n] = gray_im[i][j][0] == (gray_im[i][j][1] and gray_im[i][j][2])
 
+    nt.assert_allclose(gray_im, ref_pixel, rtol = 10, atol=30)
     assert (type(gray_im[1][1][1]) == np.uint8)
     assert (np.shape(pixel) == np.shape(gray_im))
     assert (all(test_array))
 
 def test_color2sepia(image, reference_sepia):
     im = Image.open(".././rain.jpg")
+    ref_im = Image.open(".././python_sepia_ref.jpg")
     pixel = np.asarray(im)
+    ref_pixel = np.asarray(ref_im)
     sepia_im = numpy_color2sepia(pixel)
     # check that the result has the right shape, type
     # verify some individual pixel samples
@@ -55,6 +61,7 @@ def test_color2sepia(image, reference_sepia):
                     (sepia_im[i][j][1] == sepia_G) and
                 (sepia_im[i][j][2] == sepia_B) )
 
+    nt.assert_allclose(sepia_im, ref_pixel,rtol = 10,  atol=30)
     assert (type(sepia_im[1][1][1]) == np.uint8)
     assert (np.shape(pixel) == np.shape(sepia_im))
     assert (all(test_array))

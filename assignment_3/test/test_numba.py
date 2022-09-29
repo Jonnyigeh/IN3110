@@ -8,6 +8,8 @@ def test_color2gray(image, reference_gray):
     im = Image.open(".././rain.jpg")
     pixel = np.asarray(im)
     gray_im = numba_color2gray(pixel)
+    ref_im = Image.open(".././python_gray_ref.jpg")
+    ref_pixel = np.asarray(ref_im)
     # check that the result has the right shape, type
     # assert uniform r,g,b values
     width = np.shape(gray_im)[0]
@@ -18,6 +20,7 @@ def test_color2gray(image, reference_gray):
         j = rn.randint(0, height-1)
         test_array[n] = gray_im[i][j][0] == (gray_im[i][j][1] and gray_im[i][j][2])
 
+    nt.assert_allclose(gray_im, ref_pixel,rtol = 10,  atol=30)
     assert (type(gray_im[1][1][1]) == np.uint8)
     assert (np.shape(pixel) == np.shape(gray_im))
     assert (all(test_array))
@@ -28,6 +31,8 @@ def test_color2sepia(image, reference_sepia):
     im = Image.open(".././rain.jpg")
     pixel = np.asarray(im)
     sepia_im = numba_color2sepia(pixel)
+    ref_im = Image.open(".././python_sepia_ref.jpg")
+    ref_pixel = np.asarray(ref_im)
     # check that the result has the right shape, type
     # verify some individual pixel samples
     # according to the sepia matrix
@@ -56,6 +61,7 @@ def test_color2sepia(image, reference_sepia):
                     (sepia_im[i][j][1] == sepia_G) and
                 (sepia_im[i][j][2] == sepia_B) )
 
+    nt.assert_allclose(sepia_im, ref_pixel,rtol = 10,  atol=30)
     assert (type(sepia_im[1][1][1]) == np.uint8)
     assert (np.shape(pixel) == np.shape(sepia_im))
     assert (all(test_array))

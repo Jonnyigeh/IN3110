@@ -68,5 +68,8 @@ if __name__=="__main__":
     im = Image.open(".././rain.jpg")
     pixel = np.asarray(im)
     sepia_im = python_color2sepia(pixel)
+    gray_im = python_color2gray(pixel)
+    Image.fromarray(sepia_im).save("python_sepia_ref.jpg")
+    Image.fromarray(gray_im).save("python_gray_ref.jpg")
     t2 = time.time()
     breakpoint()
