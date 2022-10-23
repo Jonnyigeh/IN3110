@@ -18,8 +18,8 @@ def numpy_color2gray(image: np.array) -> np.array:
     gray_image = np.empty_like(image)
     # Hint: use numpy slicing in order to have fast vectorized code
     # Return image (make sure it's the right type!)
-    f = lambda x: ( x[0] * 0.21 + x[1] * 0.72 + x[2] * 0.07 ) * np.array([1,1,1]) #/ 3
-    gray_image = np.asarray(np.apply_along_axis(f, 2, image), dtype="uint8")
+    f = lambda x: ( x[0] * 0.21 + x[1] * 0.72 + x[2] * 0.07 ) * np.array([1,1,1])   # Applying grayscale vector, and return array with equal values
+    gray_image = np.asarray(np.apply_along_axis(f, 2, image), dtype="uint8")        # Applies the grayscale function to every pixel in the matrix
     return gray_image
 
 
@@ -44,6 +44,9 @@ def numpy_color2sepia(image: np.array, k: Optional[float] = 1) -> np.array:
         # validate k (optional)
         raise ValueError(f"k must be between [0-1], got {k=}")
     def f(x):
+        """
+
+        """
         R = x[0]
         G = x[1]
         B = x[2]
