@@ -1,6 +1,6 @@
 import re
 from urllib.parse import urljoin
-
+from requesting_urls import get_html
 ## -- Task 2 -- ##
 
 
@@ -16,17 +16,61 @@ def find_urls(
         urls (set) : set with all the urls found in html text
     """
     # create and compile regular expression(s)
+    a_pat = re.compile(r"<a[^\<]+?href=\"[^#]?[^(\"|\>)]*?\"")
 
-    urls = ...
+    url_base_pat = re.compile(r"href=\"\/[^\/].+(?=\")")            # Matches urls that require base_url in front
+    url_other_pat = re.compile(r"href=\"\/\/.+(?=\")")                             # Matches urls from other host needing https:
+    url_full_pat = re.compile(r"href=\"https:.+(?=\")")                              # Matches full urls (e.g https://someurl.org)
+
+    # url_base_pat = re.compile(r"\/[a-zA-Z0-9][^\"]+?\"")
+    # url_other_pat = re.compile(r"//[^\"]+")
+    # url_pat = re.compile(r"https:.+\..[^(\")]{1,3}")
+    url_fragment_pat = re.compile(r"#")
     # 1. find all the anchor tags, then
     # 2. find the urls href attributes
 
+    match_set = set()
+
+    for m in a_pat.findall(html):
+
+        fragment_match = url_fragment_pat.search(m)
+        if fragment_match:
+            try:
+                url, frag = re.split("#", m)
+                m = "".join((url, "\""))
+            except:
+                pass
+
+        url_full_match = url_full_pat.search(m)
+        if url_full_match:
+            href, match = re.split("\"", url_full_match.group(0))
+            match_set.add(match)
+            continue
+
+        url_other_match = url_other_pat.search(m)
+        if url_other_match:
+            href, match = re.split("\"", url_other_match.group(0))
+            match_set.add("".join(("https:", match)))
+            continue
+
+        url_base_match = url_base_pat.search(m)
+        if url_base_match:
+            href, match = re.split("\"", url_base_match.group(0))
+            try:
+                match_set.add("".join((base_url, match)))
+                continue
+            except NameError:
+                print("Missing base URL, please specify")
     # Write to file if requested
     if output:
         print(f"Writing to: {output}")
-        ...
+        with open(output, "a") as outfile:
+            for element in match_set:
+                outfile.write(element + "\n")
 
-    ...
+    urls = match_set
+
+    return urls
 
 
 def find_articles(html: str, output=None) -> set:
@@ -36,14 +80,26 @@ def find_articles(html: str, output=None) -> set:
     returns:
         - (set) : a set with urls to all the articles found
     """
-    urls = ...
-    pattern = ...
-    articles = ...
+    urls = find_urls(html)
+    pattern = re.compile(r"[^\.]+\.wikipedia\..+?(?=\/wiki\/)\/wiki\/.*")
+    articles = set()
+    for url in urls:
+        prtcl, rest = re.split("://", url, maxsplit=1)
+        excl_pat = re.compile("\:")
+        excl = excl_pat.search(rest)
+        if excl:
+            continue
+        match = pattern.search(url)
+        if match:
+            articles.add(url)
 
     # Write to file if wanted
     if output:
-        ...
-    ...
+        with open(output, "a") as outfile:
+            for article in articles:
+                outfile.write(article + "\n")
+
+    return articles
 
 
 ## Regex example
@@ -71,3 +127,20 @@ def find_img_src(html: str):
         if match:
             src_set.add(match.group(1))
     return src_set
+
+if __name__ == "__main__":
+    html = get_html("https://en.wikipedia.org/wiki/Nobel_Prize")
+    # html = """
+    # <a href="#fragment-only">anchor link</a>
+    # <a id="some-id" href="/relative/path#fragment">relative link</a>
+    # <a href="//other.host/same-protocol">same-protocol link</a>
+    # <a href="https://example.com">absolute URL</a>
+    # <a href="https://examplo.com">absolute URL</a>
+    # <a asfas="https://exampli.com">absolute URL</a><a href="https://examplu.com">absolute URL</a>"
+    # https://en.wikipedia.org/a></sup> When a prize is awarded to recognise an achievement by a team of more than three collaborators, one or more will miss out. For example, in 2002, the prize was awarded to <a href='
+    # <a href="https://en.wikipedia.org/wiki/File"
+    # <a href="https://en.wikipedia.org/wiki/File:Nobel_Prize_by_Dimitri_O_Ledenyov_and_Viktor_O_Ledenyov.ogg"
+    # """
+    urls = find_urls(html)
+    articles = find_articles(html)
+    breakpoint()
