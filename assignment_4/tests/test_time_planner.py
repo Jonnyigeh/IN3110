@@ -34,9 +34,13 @@ def test_extract_events():
     assert "Venue" in events.columns
     assert "Type" in events.columns
     assert len(events) == 2
-    assert list(events["Venue"]) == ["UiO", "UiO"]
-    assert list(events["Date"]) == ["October", "November"]
-    assert list(events["Type"]) == ["Assignment 3", "Assignment 4"]
+    assert events["Venue"].tolist() == ["UiO", "UiO"]
+    assert events["Date"].tolist() == ["October", "November"]
+    assert events["Type"].tolist() == ["Assignment 3", "Assignment 4"]
+
+    # assert list(events["Venue"]) == ["UiO", "UiO"]
+    # assert list(events["Date"]) == ["October", "November"]
+    # assert list(events["Type"]) == ["Assignment 3", "Assignment 4"]
 
 
 def test_render_schedule():

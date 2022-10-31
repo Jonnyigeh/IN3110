@@ -66,18 +66,28 @@ def extract_events(table: bs4.element.Tag) -> pd.DataFrame:
     headings = table.find_all("th")
     labels = [th.text.strip() for th in headings]
     data = []
-
+    col_pat = re.compile(r"colspan=\"\d\"")
+    row_pat = re.compile(r"rowspan=\"\d\"")
+    numb_pat = re.compile(r"\d")
     # Extracts the data in table, keeping track of colspan and rowspan
-    rows = ...
-    rows = rows[1:]
+    rows = table.find_all("tr")
+    rows = rows[1:]             # Removes the header row
     for tr in rows:
-        cells = ...
+        cells = tr.find_all("td")
         row = []
         for cell in cells:
-            colspan = ...
-            rowspan = ...
-            ...
-            text = ...
+            colspan = 1
+            rowspan = 1
+            content = cell.text.strip()
+            colmatch = col_pat.findall(str(cell))
+            rowmatch = row_pat.findall(str(cell))
+            if colmatch:
+                colspan = int(numb_pat.search(colmatch[0]).group(0))
+
+            elif rowmatch:
+                rowspan = int(numb_pat.search(rowmatch[0]).group(0))
+
+            text = content
             row.append(
                 TableEntry(
                     text=text,
@@ -92,11 +102,11 @@ def extract_events(table: bs4.element.Tag) -> pd.DataFrame:
     all_data = expand_row_col_span(data)
 
     # List of desired columns
-    wanted = ...
+    wanted = ["Date", "Venue", "Type"]
 
     # Filter data and create pandas dataframe
     filtered_data = filter_data(labels, all_data, wanted)
-    df = ...
+    df = pd.DataFrame(filtered_data)
 
     return df
 
@@ -148,11 +158,21 @@ def filter_data(keys: list, data: list, wanted: list):
         data (list of lists) : data with rows and columns
         wanted (list of strings) : list of wanted columns
     return:
-        filtered_data (list of lists) : the filtered data
+        filtered_data (dictionary) : the filtered data
             This is the subset of data in `data`,
             after discarding the columns not in `wanted`.
     """
-    ...
+    dict = {}
+    for clmn in wanted:
+        if clmn in keys:
+            indx = keys.index(clmn)
+            inpt = []
+            for events in data:
+                inpt.append(events[indx])
+            dict[clmn] = inpt
+    filtered_data = dict
+
+    return filtered_data
 
 
 def expand_row_col_span(data):
@@ -219,11 +239,33 @@ def expand_row_col_span(data):
 
 
 if __name__ == "__main__":
+    sample_table = """
+    <table>
+      <tr>
+        <th>Date</th>
+        <th>Venue</th>
+        <th>Type</th>
+        <th>Info</th>
+      </tr>
+      <tr>
+        <td>October</td>
+        <td rowspan="2">UiO</td>
+        <td>Assignment 3</td>
+        <td>image filters</td>
+      </tr>
+      <tr>
+        <td>November</td>
+        <td colspan="2">Assignment 4</td>
+      </tr>
+    </table>
+    """
+    kek = extract_events(BeautifulSoup(sample_table, "html.parser"))
+    breakpoint()
     # test the script on the past few years by running it:
-    for year in range(20, 23):
-        url = (
-            f"https://en.wikipedia.org/wiki/20{year}–{year+1}_FIS_Alpine_Ski_World_Cup"
-        )
-        print(url)
-        md = time_plan(url)
-        print(md)
+    # for year in range(20, 23):
+    #     url = (
+    #         f"https://en.wikipedia.org/wiki/20{year}–{year+1}_FIS_Alpine_Ski_World_Cup"
+    #     )
+    #     print(url)
+    #     md = time_plan(url)
+    #     print(md)
