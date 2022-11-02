@@ -3,31 +3,31 @@ Example for plotting basketball stats
 
 """
 import matplotlib.pyplot as plt
-
-teams = {
-    "UiO": [
-        {
-            "name": "Oscar",
-            "points": 10.0,
-        },
-        {
-            "name": "Miro",
-            "points": 9.2,
-        },
-    ],
-    "Simula": [
-        {
-            "name": "Ingeborg",
-            "points": 11.2,
-        },
-        {
-            "name": "Min",
-            "points": 4.5,
-        },
-    ],
-}
-
-# a matplotlib color for each team name (could be a name or a #rrggbb web color string)
+#
+# teams = {
+#     "UiO": [
+#         {
+#             "name": "Oscar",
+#             "points": 10.0,
+#         },
+#         {
+#             "name": "Miro",
+#             "points": 9.2,
+#         },
+#     ],
+#     "Simula": [
+#         {
+#             "name": "Ingeborg",
+#             "points": 11.2,
+#         },
+#         {
+#             "name": "Min",
+#             "points": 4.5,
+#         },
+#     ],
+# }
+#
+# # a matplotlib color for each team name (could be a name or a #rrggbb web color string)
 color_table = {
     "UiO": "red",
     "Simula": "orange",
@@ -74,6 +74,3 @@ def plot_NBA_player_statistics(teams, stat="points"):
     filename = "example-points.png"
     print(f"Creating {filename}")
     plt.savefig(filename)
-
-
-plot_NBA_player_statistics(teams)
