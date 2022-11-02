@@ -1,4 +1,5 @@
 import re
+import sys
 from copy import copy
 from dataclasses import dataclass
 
@@ -30,15 +31,14 @@ def time_plan(url: str) -> str:
         markdown (str) : string containing the markdown schedule
     """
     # Get the page
-    html = ...
+    html = get_html(url)
     # parse the HTML
-    soup = ...
+    soup = BeautifulSoup(html, "html.parser")
     # locate the table
-    calendar = ...
-    soup_table = ...
+    calendar = soup.find(id="Calendar")
+    soup_table = calendar.find_next("table", {"class": "wikitable"})
     # extract events into pandas data frame
     df = extract_events(soup_table)
-
     # Write the schedule markdown
     return render_schedule(df)
 
@@ -79,6 +79,8 @@ def extract_events(table: bs4.element.Tag) -> pd.DataFrame:
             colspan = 1
             rowspan = 1
             content = cell.text.strip()
+            if content == "":
+                content = "None"
             colmatch = col_pat.findall(str(cell))
             rowmatch = row_pat.findall(str(cell))
             if colmatch:
@@ -86,8 +88,7 @@ def extract_events(table: bs4.element.Tag) -> pd.DataFrame:
 
             elif rowmatch:
                 rowspan = int(numb_pat.search(rowmatch[0]).group(0))
-
-            text = content
+            text = strip_text(content)
             row.append(
                 TableEntry(
                     text=text,
@@ -95,6 +96,7 @@ def extract_events(table: bs4.element.Tag) -> pd.DataFrame:
                     colspan=colspan,
                 )
             )
+
         data.append(row)
     # at this point `data` should be a table (list of lists)
     # where each item is a TableEntry with row/colspan properties
@@ -103,7 +105,6 @@ def extract_events(table: bs4.element.Tag) -> pd.DataFrame:
 
     # List of desired columns
     wanted = ["Date", "Venue", "Type"]
-
     # Filter data and create pandas dataframe
     filtered_data = filter_data(labels, all_data, wanted)
     df = pd.DataFrame(filtered_data)
@@ -125,9 +126,15 @@ def render_schedule(data: pd.DataFrame) -> str:
 
         Useful with pandas Series.apply
         """
-        return event_types.get(type_key[:2], type_key)
+        new_key = event_types.get(type_key[:2], type_key)
+        if new_key:
+            return new_key
+        else:
+            return type_key
 
-    ...
+    data["Type"] = data["Type"].apply(expand_event_type)
+    md = data.to_markdown(index=False)
+    return md
 
 
 def strip_text(text: str) -> str:
@@ -167,11 +174,16 @@ def filter_data(keys: list, data: list, wanted: list):
         if clmn in keys:
             indx = keys.index(clmn)
             inpt = []
-            for events in data:
-                inpt.append(events[indx])
-            dict[clmn] = inpt
-    filtered_data = dict
+            for event in data:
+                if len(event) < len(wanted):
+                    continue
+                if len(event) == len(keys):
+                    inpt.append(event[indx])
 
+                
+            dict[clmn] = inpt
+
+    filtered_data = dict
     return filtered_data
 
 
@@ -235,37 +247,38 @@ def expand_row_col_span(data):
     # now that we've applied col/row span,
     # replace the table with the raw entries,
     # instead of the TableEntry objects
+
     return [[entry.text for entry in row] for row in new_data]
 
 
 if __name__ == "__main__":
-    sample_table = """
-    <table>
-      <tr>
-        <th>Date</th>
-        <th>Venue</th>
-        <th>Type</th>
-        <th>Info</th>
-      </tr>
-      <tr>
-        <td>October</td>
-        <td rowspan="2">UiO</td>
-        <td>Assignment 3</td>
-        <td>image filters</td>
-      </tr>
-      <tr>
-        <td>November</td>
-        <td colspan="2">Assignment 4</td>
-      </tr>
-    </table>
-    """
-    kek = extract_events(BeautifulSoup(sample_table, "html.parser"))
-    breakpoint()
-    # test the script on the past few years by running it:
-    # for year in range(20, 23):
-    #     url = (
-    #         f"https://en.wikipedia.org/wiki/20{year}–{year+1}_FIS_Alpine_Ski_World_Cup"
-    #     )
-    #     print(url)
-    #     md = time_plan(url)
-    #     print(md)
+    # sample_table = """
+    # <table>
+    #   <tr>
+    #     <th>Date</th>
+    #     <th>Venue</th>
+    #     <th>Type</th>
+    #     <th>Info</th>
+    #   </tr>
+    #   <tr>
+    #     <td>October</td>
+    #     <td rowspan="2">UiO</td>
+    #     <td>Assignment 3</td>
+    #     <td>image filters</td>
+    #   </tr>
+    #   <tr>
+    #     <td>November</td>
+    #     <td colspan="2">Assignment 4</td>
+    #   </tr>
+    # </table>
+    # """
+    # tab = BeautifulSoup(sample_table, "html.parser")
+    # kek = extract_events(tab)
+    # breakpoint()
+    # sys.exit()
+    url = (
+        f"https://en.wikipedia.org/wiki/2022–23_FIS_Alpine_Ski_World_Cup"
+    )
+    md = time_plan(url)
+    print(md)
+    sys.exit()
