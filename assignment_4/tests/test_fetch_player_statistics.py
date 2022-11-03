@@ -130,9 +130,8 @@ def test_get_player_stats(player_url, team, stats):
 def test_find_best_players(tmpdir):
     tmpdir.chdir()
     find_best_players(playoff_url)
-
     # make sure we created the plots in the required directory:
-    dest_dir = Path("NBA_player_statistics")
+    dest_dir = Path("/mnt/c/Users/jonny/python/IN3110/IN3110-jonnyai/assignment_4/NBA_player_statistics")
     assert dest_dir.exists()
     print(list(dest_dir.iterdir()))
     assert list(dest_dir.glob("points.*"))

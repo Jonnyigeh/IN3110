@@ -68,7 +68,7 @@ def find_best_players(url: str) -> None:
     # Select top 3 for each team by points:
     best = {}
     best_a = {}
-    best_p = {}
+    best_r = {}
     for team, players in all_players.items():
         # Sort and extract top 3 based on points
         top_apg = 0
@@ -160,13 +160,18 @@ def find_best_players(url: str) -> None:
 
         best[team] = [{"name":f_p, "points":top_ppg},
          {"name":s_p, "points":second_ppg}, {"name":t_p, "points":third_ppg}]
+        best_a[team] = [{"name":f_a, "points":top_apg},
+         {"name":s_a, "points":second_apg}, {"name":t_a, "points":third_apg}]
+        best_r[team] = [{"name":f_r, "points":top_rpg},
+          {"name":s_r, "points":second_rpg}, {"name":t_r, "points":third_rpg}]
 
 
+    #plot_best(best, p=True)
+    plot_best(best_a, a=True)
+    plot_best(best_r, r=True)
 
-    #plot_best(best)
 
-
-def plot_best(best: Dict[str, List[Dict]], stat: str = "points") -> None:
+def plot_best(best: Dict[str, List[Dict]], stat: str = "points", p = False, a = False, r = False) -> None:
     """Plots a single stat for the top 3 players from every team.
 
     Arguments:
@@ -199,8 +204,14 @@ def plot_best(best: Dict[str, List[Dict]], stat: str = "points") -> None:
         points = []
         names = []
         for player in players:
+
             names.append(player["name"])
-            points.append(player["points"])
+            if p:
+                points.append(player["points"])
+            if a:
+                points.append(player["points"])
+            if r:
+                points.append(player["points"])
 
         all_names.extend(names)
         # the position of bars is shifted by the number of players so far
@@ -218,11 +229,23 @@ def plot_best(best: Dict[str, List[Dict]], stat: str = "points") -> None:
     # turn off gridlines
     plt.grid(False)
     # set the title
-    plt.title("points per game")
-    fig.tight_layout()
+
     #fig.subplots_adjust(bottom="spacing")
-    plt.savefig("ppg_NBA.png")
-    plt.show()
+    if p:
+        plt.title("points per game")
+        fig.tight_layout()
+        plt.savefig("NBA_player_statistics/points.png")
+
+    if a:
+        plt.title("assists per game")
+        fig.tight_layout()
+        plt.savefig("NBA_player_statistics/assists.png")
+
+    if r:
+        plt.title("rebounds per game")
+        fig.tight_layout()
+        plt.savefig("NBA_player_statistics/rebounds.png")
+
 
 def get_teams(url: str) -> list:
     """Extracts all the teams that were in the semi finals in nba
@@ -248,8 +271,8 @@ def get_teams(url: str) -> list:
     # but one way is to build a set of team names in the semifinal
     # and a dict of {team name: team url}
 
-    team_links = {}  # dict of team name: team url
-    in_semifinal = set()  # set of teams in the semifinal
+    team_links = {}         # dict of team name: team url
+    in_semifinal = set()    # set of teams in the semifinal
 
     # Loop over every row and extract teams from semi finals
     # also locate the links tot he team pages from the First Round column
