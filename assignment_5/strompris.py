@@ -10,6 +10,7 @@ import datetime
 
 import altair as alt
 import pandas as pd
+import re
 import requests
 import requests_cache
 
@@ -18,26 +19,71 @@ import requests_cache
 # this will create the file http_cache.sqlite
 requests_cache.install_cache()
 
+# LOCATION_CODES maps codes ("NO1") to names ("Oslo")
+LOCATION_CODES = {
+    "NO1": "Oslo",
+    "NO2": "Kristiansand",
+    "NO3": "Trondheim",
+    "NO4": "Tromsø",
+    "NO5": "Bergen"
+}
+
 
 # task 5.1:
+def zero_pad(n: str):
+    """zero-pad a number string
+        turns '2' into '02'
+    args:
+        n           (str): Number to be zero-padded
 
+    returns:
+        n           (str): Same number, now zero-padded
+    """
+    if len(n) == 2:
+        return n
+    else:
+        n = "".join(("0",n))
+        return n
 
 def fetch_day_prices(date: datetime.date = None, location: str = "NO1") -> pd.DataFrame:
     """Fetch one day of data for one location from hvakosterstrommen.no API
 
-    Make sure to document arguments and return value...
-    ...
+    args:
+        date            (datetime.date): datetime.date object with desired date to get electricy prices
+        location                  (str): Which location to get prices from (see LOCATION CODES)
+
+    returns:
+        df              (pd.DataFrame): Pandas dataframe containing electricity prices, and time of day.
+
     """
     if date is None:
-        date = ...
-    url = ...
-    ...
+        date = datetime.date.today()
+    year = str(date.year)
+    month = zero_pad(str(date.month))
+    day = zero_pad(str(date.day))
+
+    assert float(month) >= 10 and float(day) >= 2 and float(year) >= 2022, "Date must be after 02.10.2022"
+
+    url = "https://www.hvakosterstrommen.no/api/v1/prices/"+year+"/"+month+"-"+day+"_"+location+".json"
+    json = requests.get(url).json()
+    prices = []
+    start_times = []
+
+    for hour in range(24):
+        price = json[hour]["NOK_per_kWh"]
+        time = json[hour]["time_start"]
+        start = pd.to_datetime(time,utc=True).tz_convert("Europe/Oslo").to_pydatetime()
+        prices.append(price)
+        start_times.append(start)
 
 
-# LOCATION_CODES maps codes ("NO1") to names ("Oslo")
-LOCATION_CODES = {
-    ...
-}
+    time_start = pd.Series(start_times)
+    NOK_per_kWh = pd.Series(prices)
+    df = pd.DataFrame({"NOK_per_kWh":NOK_per_kWh, "time_start":time_start})
+
+    return df
+
+
 
 # task 1:
 
@@ -120,4 +166,6 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    fetch_day_prices(datetime.date(2022,10, 2), location="NO1")
+
+    # main()
