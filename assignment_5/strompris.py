@@ -9,10 +9,12 @@ Assignment 5
 import datetime
 
 import altair as alt
+import numpy as np
 import pandas as pd
 import re
 import requests
 import requests_cache
+import xarray as xr
 
 # install an HTTP request cache
 # to avoid unnecessary repeat requests for the same data
@@ -62,7 +64,7 @@ def fetch_day_prices(date: datetime.date = None, location: str = "NO1") -> pd.Da
     month = zero_pad(str(date.month))
     day = zero_pad(str(date.day))
 
-    assert float(month) >= 10 and float(day) >= 2 and float(year) >= 2022, "Date must be after 02.10.2022"
+    assert date >= datetime.date(2022, 10, 2), "Date must be after 02.10.2022"
 
     url = "https://www.hvakosterstrommen.no/api/v1/prices/"+year+"/"+month+"-"+day+"_"+location+".json"
     json = requests.get(url).json()
@@ -95,14 +97,43 @@ def fetch_prices(
 ) -> pd.DataFrame:
     """Fetch prices for multiple days and locations into a single DataFrame
 
-    Make sure to document arguments and return value...
-    ...
+    args:
+        end_date            (datetime.date): Last date for which you want to know prices
+        days                          (int): Number of days prior to end date you want to know prices
+        locations        (str)/(array-like): Location(s) for which you would like to know prices
+
+    returns:
+        df                   (pd.DataFrame): Dataframe containing prices, times of price, and location of prices
     """
     if end_date is None:
-        end_date = ...
+        end_date = datetime.date.today()
 
-    ...
+    loc = []
+    loc_code = []
+    for j, location in enumerate(locations):
+        for i, day in enumerate(range(days)[::-1]):
+            date = datetime.date(end_date.year, end_date.month, end_date.day) - datetime.timedelta(days=day)
+            day_prices = fetch_day_prices(date, location)
+            try:
+                p = pd.concat([p, day_prices["NOK_per_kWh"]])
+                st = pd.concat([st, day_prices["time_start"]])
 
+            except:
+                p = day_prices["NOK_per_kWh"]
+                st = day_prices["time_start"]
+
+        loc.extend([LOCATION_CODES[location]] * 24 * days)
+        loc_code.extend([location] * 24 * days)
+
+    df = pd.DataFrame(
+        {
+        "NOK_per_kWh": p,
+        "time_start": st,
+        "location": loc,
+        "location_code": loc_code }
+    )
+
+    return df
 
 # task 5.1:
 
@@ -166,6 +197,7 @@ def main():
 
 
 if __name__ == "__main__":
-    fetch_day_prices(datetime.date(2022,10, 2), location="NO1")
-
-    # main()
+    # fetch_day_prices(datetime.date(2022,10, 2), location="NO1")
+    # date = datetime.date(2022,11,5)
+    # fetch_prices(end_date=date, days=5, locations=["NO1"])
+    fetch_prices()
