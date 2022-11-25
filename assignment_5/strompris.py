@@ -94,7 +94,7 @@ def fetch_prices(
     end_date: datetime.date = None,
     days: int = 7,
     locations=tuple(LOCATION_CODES.keys()),
-) -> pd.DataFrame:
+    ) -> pd.DataFrame:
     """Fetch prices for multiple days and locations into a single DataFrame
 
     args:
@@ -141,14 +141,22 @@ def fetch_prices(
 def plot_prices(df: pd.DataFrame) -> alt.Chart:
     """Plot energy prices over time
 
-    x-axis should be time_start
-    y-axis should be price in NOK
-    each location should get its own line
+    args:
+        df          (pd.DataFrame): Dataframe (long-form) containing prices, and corresponding locations at various times
 
-    Make sure to document arguments and return value...
+    returns:
+        base           (alt.Chart): Chart for visualizing the prices as functions of time, one line for each location.
+
+
     """
-    ...
 
+    base = alt.Chart(df).mark_line().encode(
+        x = "time_start:T",
+        y = "NOK_per_kWh:Q",
+        color="location:N"
+        )
+    
+    return base
 
 # Task 5.4
 
@@ -200,4 +208,5 @@ if __name__ == "__main__":
     # fetch_day_prices(datetime.date(2022,10, 2), location="NO1")
     # date = datetime.date(2022,11,5)
     # fetch_prices(end_date=date, days=5, locations=["NO1"])
-    fetch_prices()
+    df = fetch_prices()
+    plot_prices(df)
