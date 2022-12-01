@@ -155,7 +155,7 @@ def plot_prices(df: pd.DataFrame) -> alt.Chart:
         y = "NOK_per_kWh:Q",
         color="location:N"
         )
-    
+
     return base
 
 # Task 5.4
@@ -209,4 +209,5 @@ if __name__ == "__main__":
     # date = datetime.date(2022,11,5)
     # fetch_prices(end_date=date, days=5, locations=["NO1"])
     df = fetch_prices()
-    plot_prices(df)
+    breakpoint()
+    # plot_prices(df)

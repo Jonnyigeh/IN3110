@@ -3,6 +3,7 @@ from typing import List, Optional
 
 import altair as alt
 from fastapi import FastAPI, Query, Request
+from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from starlette.staticfiles import StaticFiles
 from strompris import (
@@ -15,18 +16,24 @@ from strompris import (
     plot_prices,
 )
 
-app = FastAPI()
-templates = ...
-
-
 # `GET /` should render the `strompris.html` template
 # with inputs:
 # - request
 # - location_codes: location code dict
 # - today: current date
 
-...
-
+app = FastAPI()
+templates = Jinja2Templates(directory="./templates")
+@app.get("/", response_class=HTMLResponse)
+def post(request: Request, location_codes=LOCATION_CODES, today=datetime.date.today()):
+    return templates.TemplateResponse(
+        "strompris.html",
+        {
+            "request": request,
+            "location": location_codes,
+            "date": today,
+        },
+    )
 
 # GET /plot_prices.json should take inputs:
 # - locations (list from Query)
@@ -37,7 +44,12 @@ templates = ...
 # produced by `plot_prices`
 # (task 5.6: return chart stacked with plot_daily_prices)
 
-...
+@app.get("/plot_prices.json")
+def plot_prices(request: Request, end: datetime.date = None, locations: list = list(LOCATION_CODES.keys()), days: int = 7):
+    df = fetch_prices(locations=locations, end_date=end,days=days)
+    chart = plot_prices(df)
+    return chart.to_dict()
+
 
 # Task 5.6:
 # `GET /activity` should render the `activity.html` template
@@ -67,5 +79,5 @@ templates = ...
 
 if __name__ == "__main__":
     # use uvicorn to launch your application on port 5000
-
-    ...
+    import uvicorn
+    uvicorn.run(app, host="127.0.0.1", port=5000)
